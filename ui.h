@@ -7,6 +7,7 @@
 #define ICON_IDLE   "media-record-symbolic"
 #define ICON_ACTIVE "media-record"
 #define ICON_PICK   "gtk-color-picker"
+#define ICON_EDIT   "gtk-edit"
 #define ICON_EXIT   "gtk-quit"
 
 void ui_init();
@@ -15,6 +16,8 @@ void ui_menu_popup(GtkStatusIcon*, guint, guint, GtkMenu*);
 void ui_record(GtkStatusIcon*, gpointer);
 void ui_select_window(GtkMenuItem*, gpointer);
 void ui_dialog(GtkMessageType, gchar*, ...);
+void ui_update_fps(GtkMenuItem*, guint);
+void ui_change_fps(GtkMenuItem*, gpointer);
 
 GtkStatusIcon* tray;
 gboolean state;

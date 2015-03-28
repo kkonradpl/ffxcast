@@ -72,3 +72,9 @@ void settings_update_menuitem(GtkCheckMenuItem *menuitem, gpointer ptr)
     *conf = gtk_check_menu_item_get_active(menuitem);
     settings_write();
 }
+
+void settings_update_fps(guint fps)
+{
+    conf.fps = fps;
+    settings_write();
+}

@@ -25,5 +25,6 @@ conf_t conf;
 void settings_read();
 void settings_write();
 void settings_update_menuitem(GtkCheckMenuItem*, gpointer);
+void settings_update_fps(guint);
 
 #endif // FFXCAST_SETTINGS_H_

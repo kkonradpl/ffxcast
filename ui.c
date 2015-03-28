@@ -22,6 +22,12 @@ GtkWidget* ui_menu_init()
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_picker);
     g_signal_connect(menu_picker, "activate", G_CALLBACK(ui_select_window), NULL);
 
+    GtkWidget* menu_fps = gtk_image_menu_item_new();
+    gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_fps), GTK_WIDGET(gtk_image_new_from_icon_name(ICON_EDIT, GTK_ICON_SIZE_MENU)));;
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_fps);
+    ui_update_fps(GTK_MENU_ITEM(menu_fps), conf.fps);
+    g_signal_connect(menu_fps, "activate", G_CALLBACK(ui_change_fps), &conf.fps);
+
     GtkWidget* menu_decorations = gtk_check_menu_item_new_with_label("Select decorations");
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menu_decorations);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menu_decorations), conf.decorations);
@@ -99,4 +105,34 @@ void ui_dialog(GtkMessageType type, gchar* format, ...)
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
     g_free(msg);
+}
+
+void ui_update_fps(GtkMenuItem* menu_item, guint fps)
+{
+    gchar* label = g_strdup_printf("FPS: %u", fps);
+    gtk_menu_item_set_label(menu_item, label);
+    g_free(label);
+}
+
+void ui_change_fps(GtkMenuItem* menu_item, gpointer user_data)
+{
+    guint* fps = (guint*)user_data;
+    GtkWidget *dialog, *spin_button;
+    dialog = gtk_message_dialog_new(NULL,
+                                    GTK_DIALOG_MODAL,
+                                    GTK_MESSAGE_QUESTION,
+                                    GTK_BUTTONS_OK_CANCEL,
+                                    "Set frame rate (FPS):");
+    gtk_window_set_title(GTK_WINDOW(dialog), APP_NAME);
+    spin_button = gtk_spin_button_new(GTK_ADJUSTMENT(gtk_adjustment_new((gdouble)(*fps), 1.0, 60.0, 1.0, 2.0, 0.0)), 0, 0);
+    gtk_container_add(GTK_CONTAINER(gtk_message_dialog_get_message_area(GTK_MESSAGE_DIALOG(dialog))), spin_button);
+
+    gtk_widget_show_all(dialog);
+    if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK)
+    {
+        guint new_fps = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spin_button));
+        settings_update_fps(new_fps);
+        ui_update_fps(menu_item, new_fps);
+    }
+    gtk_widget_destroy(dialog);
 }
